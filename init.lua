@@ -89,10 +89,29 @@ require("lazy").setup({
 })
 
 -- Basic setup
-require("nvim-tree").setup()
+local function open_pdf(path)
+  vim.fn.jobstart({"xdg-open", path}, {detach = true})
+end
+
+require("nvim-tree").setup({
+  actions = {
+    open_file = {
+      quit_on_open = false,
+    },
+  },
+})
+
+vim.api.nvim_create_autocmd("BufEnter", {
+  pattern = "*.pdf",
+  callback = function()
+    open_pdf(vim.fn.expand("<afile>"))
+    vim.cmd("bd") -- close buffer after opening externally
+  end,
+})
 
 -- Keybinding to toggle tree
 vim.keymap.set('n', '<C-n>', ':NvimTreeToggle<CR>')
+
 -- Keybinding to Telescope live_grep
 vim.keymap.set('n', '<leader>fg', require('telescope.builtin').live_grep, { desc = "Live Grep" })
 vim.keymap.set('n', '<leader>ff', require('telescope.builtin').find_files, { desc = "Find Files" })

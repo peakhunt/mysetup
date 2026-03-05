@@ -94,6 +94,9 @@ local function open_pdf(path)
 end
 
 require("nvim-tree").setup({
+  update_cwd = true,
+  respect_buf_cwd = true,
+  sync_root_with_cwd = true,
   actions = {
     open_file = {
       quit_on_open = false,

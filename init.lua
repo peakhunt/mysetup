@@ -230,3 +230,18 @@ vim.keymap.set('v', '<leader>c', '"+y', { desc = "Copy to system clipboard" })
 vim.g.loaded_perl_provider = 0
 vim.g.loaded_python3_provider = 0
 vim.g.loaded_ruby_provider = 0
+
+local cmp = require'cmp'
+
+cmp.setup({
+  completion = {
+    completeopt = 'menu,menuone,noinsert'
+  },
+  preselect = cmp.PreselectMode.Item,  -- auto-select the first item
+  mapping = {
+    ['<C-n>'] = cmp.mapping.select_next_item(),
+    ['<C-p>'] = cmp.mapping.select_prev_item(),
+    ['<CR>']  = cmp.mapping.confirm({ select = true }),
+  },
+})
+

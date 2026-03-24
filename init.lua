@@ -155,6 +155,8 @@ cmp.setup {
 -- Copy selection to system clipboard with <leader>c in Visual mode
 vim.keymap.set('v', '<leader>c', '"+y', { desc = "Copy to system clipboard" })
 
+vim.keymap.set('n', '<C-n>', ':NvimTreeToggle<CR>', { silent = true })
+
 vim.g.loaded_perl_provider = 0
 vim.g.loaded_python3_provider = 0
 vim.g.loaded_ruby_provider = 0

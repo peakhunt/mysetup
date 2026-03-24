@@ -14,186 +14,114 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
-  -- Core plugins
   "nvim-tree/nvim-tree.lua",
   "nvim-tree/nvim-web-devicons",
   "nvim-lualine/lualine.nvim",
-  { "nvim-telescope/telescope.nvim", dependencies = { "nvim-lua/plenary.nvim" } },
-  { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
-  { "lukas-reineke/indent-blankline.nvim",
-    main = "ibl",
-    ---@module "ibl"
-    ---@type ibl.config
-    opts = {
-      --enabled = true,
-      -- indent = { char = "┊" },
-      --scope = { enabled = true, show_start = true, show_end = true },
+  {
+    "nvim-telescope/telescope.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
+      { "nvim-telescope/telescope-live-grep-args.nvim" , version = "^1.0.0" },
     },
+    config = function()
+      local telescope = require('telescope')
+      telescope.setup({
+        defaults = {
+          vimgrep_arguments = {
+            "rg", "--color=never", "--no-heading", "--with-filename",
+            "--line-number", "--column", "--smart-case",
+          },
+        },
+        extensions = {
+          live_grep_args = {
+            auto_quoting = false,
+            -- Define mappings inside the TUI
+            mappings = {
+              i = {
+                ["<C-k>"] = require("telescope-live-grep-args.actions").quote_prompt(),
+                ["<C-i>"] = require("telescope-live-grep-args.actions").quote_prompt({ postfix = " -t " }),
+              },
+            },
+          }
+        }
+      })
+      telescope.load_extension('fzf')
+      telescope.load_extension("live_grep_args")
+    end
   },
-
-
-  -- nvim-cmp core
+  { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
+  { "lukas-reineke/indent-blankline.nvim", main = "ibl", opts = {} },
   { "hrsh7th/nvim-cmp",
     event = "InsertEnter",
     dependencies = {
-      "hrsh7th/cmp-nvim-lsp", -- LSP completions
-      "hrsh7th/cmp-buffer", -- buffer words
-      "hrsh7th/cmp-path", -- filesystem paths
-      "hrsh7th/cmp-cmdline", -- command line completions
-      "L3MON4D3/LuaSnip", -- snippet engine
-      "saadparwaiz1/cmp_luasnip", -- snippet completions
+      "hrsh7th/cmp-nvim-lsp", "hrsh7th/cmp-buffer", "hrsh7th/cmp-path",
+      "hrsh7th/cmp-cmdline", "L3MON4D3/LuaSnip", "saadparwaiz1/cmp_luasnip",
     },
     config = function()
       local cmp = require("cmp")
       local luasnip = require("luasnip")
       cmp.setup({
-        snippet = {
-          expand = function(args)
-            luasnip.lsp_expand(args.body)
-          end,
-        },
+        snippet = { expand = function(args) luasnip.lsp_expand(args.body) end },
         mapping = cmp.mapping.preset.insert({
-          ["<C-b>"] = cmp.mapping.scroll_docs(-4),
-          ["<C-f>"] = cmp.mapping.scroll_docs(4),
           ["<C-Space>"] = cmp.mapping.complete(),
-          ["<C-e>"] = cmp.mapping.abort(),
           ["<CR>"] = cmp.mapping.confirm({ select = true }),
         }),
         sources = cmp.config.sources({
-          { name = "nvim_lsp" },
-          { name = "luasnip" },
-          { name = "buffer" },
-          { name = "path" },
+          { name = "nvim_lsp" }, { name = "luasnip" }, { name = "buffer" }, { name = "path" },
         }),
       })
     end,
   },
-
   -- Themes
-  "morhetz/gruvbox",
-  "folke/tokyonight.nvim",
-  { "catppuccin/nvim", name = "catppuccin" },
-  "shaunsingh/nord.nvim",
-  "scottmckendry/cyberdream.nvim",
-  "neanias/everforest-nvim",
-  "sainnhe/gruvbox-material",
-  "rebelot/kanagawa.nvim",
-  "EdenEast/nightfox.nvim",
-  "sainnhe/edge",
-  "NLKNguyen/papercolor-theme",
-  "olimorris/onedarkpro.nvim",
-  "rose-pine/neovim",
-  "savq/melange-nvim",
-  "ATTron/bebop.nvim",
-  { 'projekt0n/github-nvim-theme', name = 'github-theme' },
+  "morhetz/gruvbox", "folke/tokyonight.nvim", { "catppuccin/nvim", name = "catppuccin" },
+  "sainnhe/gruvbox-material", "rebelot/kanagawa.nvim", "sainnhe/edge",
+  "rose-pine/neovim", "ATTron/bebop.nvim",
 })
 
--- Basic setup
-local function open_pdf(path)
-  vim.fn.jobstart({"xdg-open", path}, {detach = true})
-end
-
+-- Nvim-Tree Setup
 require("nvim-tree").setup({
   update_cwd = true,
   respect_buf_cwd = true,
   sync_root_with_cwd = true,
-  actions = {
-    open_file = {
-      quit_on_open = false,
-    },
-  },
+  git = { ignore = false },
 })
 
-vim.api.nvim_create_autocmd("BufEnter", {
-  pattern = "*.pdf",
-  callback = function()
-    open_pdf(vim.fn.expand("<afile>"))
-    vim.cmd("bd") -- close buffer after opening externally
-  end,
-})
-
--- Keybinding to toggle tree
-vim.keymap.set('n', '<C-n>', ':NvimTreeToggle<CR>')
-
--- Keybinding to Telescope live_grep
-vim.keymap.set('n', '<leader>fg', require('telescope.builtin').live_grep, { desc = "Live Grep" })
+-- KEYMAPS
+vim.keymap.set("n", "<leader>fg", function()
+  require('telescope').extensions.live_grep_args.live_grep_args()
+end, { desc = "Live Grep with Args" })
 vim.keymap.set('n', '<leader>ff', require('telescope.builtin').find_files, { desc = "Find Files" })
 vim.keymap.set('n', '<leader>gw', require('telescope.builtin').grep_string, { desc = "Grep word under cursor" })
 vim.keymap.set('v', '<leader>gw', function()
-  local builtin = require('telescope.builtin')
-  builtin.grep_string({ search = vim.fn.expand("<cword>") })
+  local function get_visual_selection()
+    vim.cmd('noau normal! "vy"')
+    return vim.fn.getreg('v')
+  end
+  require('telescope.builtin').grep_string({ search = get_visual_selection() })
 end, { desc = "Grep visual selection" })
 
-require('lualine').setup {
-  options = {
-    theme = 'onelight',
-    section_separators = { left = '', right = '' },
-    component_separators = { left = '', right = '' },
-    icons_enabled = true,
-  },
-  sections = {
-    lualine_a = { 'mode' },
-    lualine_b = { 'branch', 'diff' },
-    lualine_c = { 'filename' },
-    lualine_x = { 'encoding', 'fileformat', 'filetype' },
-    lualine_y = { 'progress' },
-    lualine_z = { 'location' },
-  },
-}
+-- Utility functions & Autocmds
+local function open_pdf(path) vim.fn.jobstart({"xdg-open", path}, {detach = true}) end
+vim.api.nvim_create_autocmd("BufEnter", {
+  pattern = "*.pdf",
+  callback = function() open_pdf(vim.fn.expand("<afile>")); vim.cmd("bd") end,
+})
 
-local highlight = {
-  "RainbowRed",
-  "RainbowYellow",
-  "RainbowBlue",
-  "RainbowOrange",
-  "RainbowGreen",
-  "RainbowViolet",
-  "RainbowCyan",
-}
-
-local hooks = require "ibl.hooks"
--- create the highlight groups in the highlight setup hook, so they are reset
--- every time the colorscheme changes
-hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
-  vim.api.nvim_set_hl(0, "RainbowRed", { fg = "#E06C75" })
-  vim.api.nvim_set_hl(0, "RainbowYellow", { fg = "#E5C07B" })
-  vim.api.nvim_set_hl(0, "RainbowBlue", { fg = "#61AFEF" })
-  vim.api.nvim_set_hl(0, "RainbowOrange", { fg = "#D19A66" })
-  vim.api.nvim_set_hl(0, "RainbowGreen", { fg = "#98C379" })
-  vim.api.nvim_set_hl(0, "RainbowViolet", { fg = "#C678DD" })
-  vim.api.nvim_set_hl(0, "RainbowCyan", { fg = "#56B6C2" })
-end)
-
-require("ibl").setup {
-  indent = {
-    char = "┊", -- ultra-lean
-    tab_char = "┊",
-    highlight = highlight,
-  },
-  whitespace = {
-    highlight = nil, -- disable whitespace highlighting
-    remove_blankline_trail = true,
-  },
-  scope = { enabled = false },
-}
--- vim.api.nvim_set_hl(0, "IndentLean", { fg = "#3e4451", nocombine = true })
-
-vim.cmd("syntax on")
+-- Visual Settings
 vim.opt.termguicolors = true
+vim.cmd("colorscheme catppuccin-mocha")
+vim.opt.number = true
+vim.opt.relativenumber = true
+vim.opt.shiftwidth = 2
+vim.opt.tabstop = 2
+vim.opt.expandtab = true
 
---vim.cmd([[
---  augroup TransparentBackground
---    autocmd!
---    autocmd ColorScheme * highlight Normal ctermbg=none guibg=none
---    autocmd ColorScheme * highlight NonText ctermbg=none guibg=none
---  augroup END
---]])
-vim.cmd("colorscheme PaperColor")
+-- Lualine
+require('lualine').setup { options = { theme = 'onelight', icons_enabled = true } }
 
--- Set indentation
-vim.opt.shiftwidth = 2   -- number of spaces for autoindent
-vim.opt.tabstop = 2      -- number of spaces per tab
-vim.opt.expandtab = true -- convert tabs to spaces
+-- Indent Blankline
+require("ibl").setup { indent = { char = "┊" }, scope = { enabled = false } }
 
 vim.opt.number = true
 vim.opt.relativenumber = true

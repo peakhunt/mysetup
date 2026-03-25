@@ -107,6 +107,9 @@ require('lualine').setup { options = { theme = 'onelight' } }
 require("ibl").setup { indent = { char = "┊" }, scope = { enabled = false } }
 
 -- 5. KEYMAPS
+vim.keymap.set("n", "<leader>fg", function()
+  require('telescope').extensions.live_grep_args.live_grep_args()
+end, { desc = "Live Grep with Args" })
 vim.keymap.set('n', '<C-n>', ':NvimTreeToggle<CR>', { silent = true })
 vim.keymap.set('v', '<leader>c', '"+y', { desc = "Copy to system clipboard" })
 vim.keymap.set('n', '<leader>ff', require('telescope.builtin').find_files)

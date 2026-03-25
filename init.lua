@@ -101,6 +101,9 @@ vim.keymap.set('v', '<leader>gw', function()
   require('telescope.builtin').grep_string({ search = get_visual_selection() })
 end, { desc = "Grep visual selection" })
 
+local builtin = require('telescope.builtin')
+vim.keymap.set('n', 'gd', builtin.grep_string, { desc = "Find occurrences" })
+
 -- Utility functions & Autocmds
 local function open_pdf(path) vim.fn.jobstart({"xdg-open", path}, {detach = true}) end
 vim.api.nvim_create_autocmd("BufEnter", {

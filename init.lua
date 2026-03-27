@@ -94,7 +94,7 @@ require("lazy").setup({
 
 -- 3. GENERAL SETTINGS
 vim.opt.termguicolors = true
-vim.cmd("colorscheme catppuccin-mocha")
+vim.cmd("colorscheme catppuccin-macchiato")
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.shiftwidth = 2
@@ -110,9 +110,17 @@ require("ibl").setup { indent = { char = "┊" }, scope = { enabled = false } }
 vim.keymap.set("n", "<leader>fg", function()
   require('telescope').extensions.live_grep_args.live_grep_args()
 end, { desc = "Live Grep with Args" })
+vim.keymap.set('n', '<leader>gw', function()
+    require('telescope.builtin').live_grep({
+        default_text = vim.fn.expand("<cword>"),
+    })
+end, { desc = 'Live grep word under cursor' })
 vim.keymap.set('n', '<C-n>', ':NvimTreeToggle<CR>', { silent = true })
 vim.keymap.set('v', '<leader>c', '"+y', { desc = "Copy to system clipboard" })
 vim.keymap.set('n', '<leader>ff', require('telescope.builtin').find_files)
+
+vim.keymap.set('n', '<leader>gc', require('telescope.builtin').git_commits, { desc = 'Telescope Git Commits' })
+
 
 -- Disable provider bloat
 vim.g.loaded_perl_provider = 0

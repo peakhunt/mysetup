@@ -130,6 +130,10 @@ vim.g.loaded_python3_provider = 0
 vim.g.loaded_ruby_provider = 0
 vim.g.loaded_node_provider = 0
 
+vim.opt_local.foldmethod = "manual"
+vim.opt_local.foldlevel = 99
+vim.opt_local.foldenable = true
+
 -- Folding
 vim.api.nvim_create_autocmd("FileType", {
   pattern = { "lua", "c", "html", "vue", "javascript", "css" },

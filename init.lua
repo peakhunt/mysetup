@@ -29,7 +29,8 @@ require("lazy").setup({
       local telescope = require('telescope')
       telescope.setup({
         defaults = {
-          vimgrep_arguments = { "rg", "--color=never", "--no-heading", "--with-filename", "--line-number", "--column", "--smart-case" },
+          vimgrep_arguments = { "rg", "--color=never", "--no-heading", "--with-filename",
+                                "--line-number", "--column", "--smart-case" },
         },
       })
       telescope.load_extension('fzf')
@@ -38,17 +39,18 @@ require("lazy").setup({
   },
 
   -- TREESITTER (Fixed diet)
-    { 
+  { 
     "nvim-treesitter/nvim-treesitter", 
     build = ":TSUpdate",
     config = function()
       local status, ts = pcall(require, "nvim-treesitter")
       if not status then return end
-      
+
       ts.setup({
         -- Force it to use the standard site directory
         install_dir = vim.fn.stdpath("data") .. "/site",
-        ensure_installed = { "lua", "vim", "vimdoc", "python", "javascript", "verilog" },
+        ensure_installed = { "lua", "vim", "vimdoc", "python",
+                              "javascript", "verilog", "c", "html", "vue", "css" },
         highlight = { enable = true },
       })
       -- Satisfy treesitter checkhealth bug which expects trailing slash
@@ -127,3 +129,27 @@ vim.g.loaded_perl_provider = 0
 vim.g.loaded_python3_provider = 0
 vim.g.loaded_ruby_provider = 0
 vim.g.loaded_node_provider = 0
+
+-- Folding
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "lua", "c", "html", "vue", "javascript", "css" },
+  callback = function()
+    -- Use Tree-sitter for modern, context-aware folding
+    vim.opt_local.foldmethod = "expr"
+    vim.opt_local.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+    
+    -- Start unfolded (99) so you can actually see your code
+    vim.opt_local.foldlevel = 99
+    vim.opt_local.foldenable = true
+
+    -- BUG FIX: Tree-sitter folds often don't calculate on initial load.
+    -- This "nudges" Neovim to look at the file structure immediately.
+    vim.schedule(function()
+      vim.cmd("normal! zx")
+    end)
+  end,
+})
+
+-- 4. THE SPACEBAR KING (MBS PIVOT)
+vim.g.mapleader = " "
+vim.keymap.set("n", "<space>", "za", { desc = "Toggle Fold" })

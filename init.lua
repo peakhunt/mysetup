@@ -96,7 +96,8 @@ require("lazy").setup({
 
 -- 3. GENERAL SETTINGS
 vim.opt.termguicolors = true
-vim.cmd("colorscheme catppuccin-macchiato")
+--vim.cmd("colorscheme catppuccin-latte")
+vim.cmd("colorscheme kanagawa")
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.shiftwidth = 2
@@ -105,7 +106,7 @@ vim.opt.expandtab = true
 
 -- 4. PLUGIN SETUP
 require("nvim-tree").setup({ update_cwd = true, respect_buf_cwd = true, sync_root_with_cwd = true })
-require('lualine').setup { options = { theme = 'onelight' } }
+require('lualine').setup { options = { theme = 'auto' } }
 require("ibl").setup { indent = { char = "┊" }, scope = { enabled = false } }
 
 -- 5. KEYMAPS
@@ -122,7 +123,6 @@ vim.keymap.set('v', '<leader>c', '"+y', { desc = "Copy to system clipboard" })
 vim.keymap.set('n', '<leader>ff', require('telescope.builtin').find_files)
 
 vim.keymap.set('n', '<leader>gc', require('telescope.builtin').git_commits, { desc = 'Telescope Git Commits' })
-
 
 -- Disable provider bloat
 vim.g.loaded_perl_provider = 0
@@ -157,3 +157,5 @@ vim.api.nvim_create_autocmd("FileType", {
 -- 4. THE SPACEBAR KING (MBS PIVOT)
 vim.g.mapleader = " "
 vim.keymap.set("n", "<space>", "za", { desc = "Toggle Fold" })
+
+vim.o.background = "dark"

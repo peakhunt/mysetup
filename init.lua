@@ -87,11 +87,25 @@ require("lazy").setup({
   -- THEMES
   "morhetz/gruvbox", "folke/tokyonight.nvim", { "catppuccin/nvim", name = "catppuccin" },
   "sainnhe/gruvbox-material", "rebelot/kanagawa.nvim", "rose-pine/neovim",
+  "nkxxll/ghostty-default-style-dark.nvim",
 
 }, {
   -- LAZY CONFIG (The "No Bloat" zone)
   rocks = { enabled = false }, 
   pkg = { sources = { "ghostty", "terminal", "packer", "local" } } -- Strictly no luarocks
+})
+
+require('kanagawa').setup({
+  transparent = false,  -- This removes the background color
+  theme = "wave",      -- Or "dragon" / "lotus"
+  overrides = function(colors)
+    return {
+      -- Optional: If you want a "tinted" transparency look, 
+      -- you can leave some UI elements opaque or dimmed.
+      NormalFloat = { bg = "none" },
+      FloatBorder = { bg = "none" },
+    }
+  end,
 })
 
 -- 3. GENERAL SETTINGS

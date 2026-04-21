@@ -1,23 +1,12 @@
-#font-family = "JetBrainsMono Nerd Font"
-#font-family = "Fira Code Nerd Font"
-#font-family = "UBuntu Nerd Font"
-#font-family = "Inter"
 font-family = "Google Sans Code"
-#font-style = "Bold"
 font-size = 12
-#font-thicken = false
 adjust-cell-height = 15%
 
-theme = "Nvim Dark"
-#theme = "Catppuccin Mocha"
-#theme = "Catppuccin Macchiato"
-background-opacity = 0.85
+theme = "Kanagawa Wave"
+background-opacity = 0.75
 background-blur-radius = 20
 #background-opacity = 1
 
-# THE "CLEAN" TABS FIX (Integrated into titlebar)
-# Setting gtk-titlebar to false while window-theme is ghostty 
-# moves the tabs into the header area on Linux/GTK.
 window-theme = "ghostty"
 window-decoration = true
 gtk-titlebar = false
@@ -37,17 +26,17 @@ keybind = ctrl+shift+l=goto_split:right
 keybind = ctrl+shift+k=goto_split:top
 keybind = ctrl+shift+j=goto_split:bottom
 
-# Bash specific
-command = env TERM=xterm-256color /bin/bash
-
-# Makes Nerd Font icons (glyphs) bigger and bolder to match your text
-#font-feature = ["-calt", "-liga", "-dlig"] 
-# Or force specific icon scaling if they look like ants:
-#adjust-font-baseline = "1px"
-
 window-inherit-working-directory = true
 split-inherit-working-directory = true
 tab-inherit-working-directory = true
 
-cursor-style = block
+#shell-integration = none
 shell-integration-features = no-cursor
+
+desktop-notifications = false
+
+cursor-style = block
+cursor-style-blink = true
+
+custom-shader = cursor_warp.glsl
+custom-shader-animation = always

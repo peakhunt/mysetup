@@ -173,3 +173,5 @@ vim.g.mapleader = " "
 vim.keymap.set("n", "<space>", "za", { desc = "Toggle Fold" })
 
 vim.o.background = "dark"
+
+vim.keymap.set('x', '<C-S-c>', '"+y') -- Copy selection to system clipboard
